@@ -1,0 +1,81 @@
+PixClip - The easy, sleek and fast screen clipping tool (Linux version).
+Copyright © 2009 António Maria Torre do Valle
+http://www.pixclip.net
+
+
+About
+=====
+
+This is the Linux Version of PixClip. It is a Mono application written in C#.
+Being still an initial release, must be considered alpha software and handled 
+with care. YOU HAVE BEEN WARNED!
+
+The aim of PixClip is to integrate as seamlessly as possible with the OS to 
+allow users to easily capture clips to file or to the clipboard. Check out 
+the Windows version and features at: http://www.pixclip.net
+
+This version of PixClip is aimed to be Gnome Desktop compliant, although 
+integration with the K Desktop Environment is also intended.
+
+Features:
+  * Select region from screen;
+  * Save clip as jpeg.
+
+Todo:
+  * Clipboard integration;
+  * Options form;
+  * Timed capture;
+  * Shortcut keys;
+  * And everything else...
+
+
+Instructions
+============
+
+Compiling:
+Use MonoDevelop 2.0 or something that can read its csproj files.
+Basic Mono install with Gtk# should work.
+
+Installing:
+No install package or script is available yet. Just copy PixClip.exe and 
+start_pixclip.sh to any folder.
+
+Running:
+Double click the start_pixclip.sh script to launch PixClip.
+
+Using:
+  1. Open PixClip - Click PixClip's icon in the notification area.
+  2. Select a region - press (and keep pressed) the left mouse button at the 
+     selection start point, drag to the end point and release the left mouse 
+     button.
+  3. Save the file - Specify a filename (including ".jpg") and a location to 
+     save the file.
+
+To quit PixClip, right click it's icon in the notification area and select 
+'Quit'.
+
+Contact
+=======
+
+To contact the author, write to pixclip@gmail.com or use the contact form 
+located at http://www.pixclip.net/contact.
+Website: http://www.pixclip.net
+
+
+License
+=======
+
+PixClip Linux is licensed under the GPLv3. Read LICENSE for full text.
+
+PixClip Linux is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+PixClip Linux is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with PixClip Linux.  If not, see <http://www.gnu.org/licenses/>.
