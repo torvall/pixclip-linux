@@ -20,4 +20,4 @@
 #	You should have received a copy of the GNU General Public License
 #	along with PixClip Linux.  If not, see <http://www.gnu.org/licenses/>.
 
-cd `dirname $0` && mono ./PixClip.exe &>/dev/null
+cd `dirname $0` ; mono ./PixClip.exe &>/dev/null
