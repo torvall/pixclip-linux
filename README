@@ -33,7 +33,8 @@ Instructions
 ============
 
 Compiling:
-Use MonoDevelop 2.0 or something that can read its csproj files.
+Simply do "sh build.sh" to compile PixClip.
+You can also use MonoDevelop 2.0 or something that can read its csproj files.
 Basic Mono install with Gtk# should work.
 
 Installing:
