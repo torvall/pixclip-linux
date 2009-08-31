@@ -19,10 +19,10 @@ integration with the K Desktop Environment is also intended.
 
 Features:
   * Select region from screen;
+  * Puts image on clipboard (allows to paste on OpenOffice, GIMP, etc.);
   * Save clip as jpeg.
 
 Todo:
-  * Clipboard integration;
   * Options form;
   * Timed capture;
   * Shortcut keys;

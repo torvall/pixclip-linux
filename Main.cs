@@ -27,7 +27,7 @@ using Gdk;
 namespace PixClip {
 	
 	public class MainClass {
-	
+
 		private static StatusIcon trayIcon;
 		private static AboutDialog aboutDialog;
 		
@@ -67,6 +67,7 @@ namespace PixClip {
 				Console.WriteLine("main: selected rect - w=" + rectSelection.Width + " x h=" + rectSelection.Height);
 				Pixbuf pixClip = Capture.CaptureImage(rectSelection);
 
+				// TODO: Do not offer to save clip after selection and popup a clickable tooltip instead.
 				FileChooserDialog fcd = new FileChooserDialog("PixClip - Save clip as...", null, FileChooserAction.Save, "Cancel", ResponseType.Cancel, "Save", ResponseType.Accept);
 				FileFilter fltJpg = new FileFilter();
 				fltJpg.AddMimeType("image/jpeg");
@@ -84,6 +85,10 @@ namespace PixClip {
 					Console.WriteLine("main: image save canceled");
 				}
 				fcd.Destroy();
+
+				Clipboard clip = Gtk.Clipboard.Get(Atom.Intern("CLIPBOARD", false));
+				clip.Image = pixClip;
+				Console.WriteLine("main: image added to the clipboard");
 			}
 			bSelecting = false;
 			Console.WriteLine("main: capture process ended");
@@ -94,45 +99,65 @@ namespace PixClip {
 				Console.WriteLine("main: icon menu called");
 				Menu popupMenu = new Menu();
 	
-				ImageMenuItem menuItemAbout = new ImageMenuItem ("About");
-				Gtk.Image appimg1 = new Gtk.Image(Stock.About, IconSize.Menu);
-				menuItemAbout.Image = appimg1;
-				popupMenu.Add(menuItemAbout);
+				ImageMenuItem menuItemSaveImage = new ImageMenuItem ("Save image...");
+				Gtk.Image appimg1 = new Gtk.Image(Stock.SaveAs, IconSize.Menu);
+				menuItemSaveImage.Image = appimg1;
+				menuItemSaveImage.State = StateType.Insensitive; // TODO: Check for image availability when drawing menu...
+				popupMenu.Add(menuItemSaveImage);
+
+				menuItemSaveImage.Activated += OnSaveImageActivated;
 				
-				menuItemAbout.Activated += OnHelloAboutActivated;
+				SeparatorMenuItem sepMnit1 = new SeparatorMenuItem();
+				popupMenu.Add(sepMnit1);
+				
+				ImageMenuItem menuItemAbout = new ImageMenuItem ("About...");
+				Gtk.Image appimg2 = new Gtk.Image(Stock.About, IconSize.Menu);
+				menuItemAbout.Image = appimg2;
+				popupMenu.Add(menuItemAbout);
+
+				menuItemAbout.Activated += OnAboutDialogActivated;
 				
 				ImageMenuItem menuItemQuit = new ImageMenuItem ("Quit");
-				Gtk.Image appimg2 = new Gtk.Image(Stock.Quit, IconSize.Menu);
-				menuItemQuit.Image = appimg2;
+				Gtk.Image appimg3 = new Gtk.Image(Stock.Quit, IconSize.Menu);
+				menuItemQuit.Image = appimg3;
 				popupMenu.Add(menuItemQuit);
 				
 				menuItemQuit.Activated += delegate {
 					Console.WriteLine("main: PixClip closing");
 					Application.Quit();
 				};
+				
 				popupMenu.ShowAll();
 				popupMenu.Popup();
 			}
 		}
 
-		static void OnHelloAboutActivated(object sender, EventArgs e) {
-			if(!bSelecting) {
-				Console.WriteLine("main: about form invoked");
-				aboutDialog = new AboutDialog();
-				
-				aboutDialog.ProgramName = "PixClip Linux";
-				aboutDialog.Version = "0.01 alpha";
-				aboutDialog.Comments = "Easy, sleek and fast screen clipping, now also on Linux!";
-				aboutDialog.License = "Free Software";
-				aboutDialog.Authors = new string[] { "António Maria Torre do Valle" };
-				aboutDialog.Website = "http://www.pixclip.net";
-				aboutDialog.Response += OnHelloAboutClose;
-				
-				aboutDialog.Run();
-			}
+		static void OnSaveImageActivated(object sender, EventArgs e) {
+			
+		}
+			
+		static void OnAboutDialogActivated(object sender, EventArgs e) {
+			Console.WriteLine("main: about form invoked");
+			aboutDialog = new AboutDialog();
+			
+			aboutDialog.ProgramName = AppInfo.sProgramName;
+			aboutDialog.Version = AppInfo.sVersion + " alpha";
+			aboutDialog.Comments = AppInfo.sComments;
+			aboutDialog.WrapLicense = true;
+			aboutDialog.License = AppInfo.sLicense;
+			//aboutDialog.Authors = new string[] { "António Maria Torre do Valle" };
+			//aboutDialog.Logo = TODO: Add PixClip logo in about dialog.
+			AboutDialog.SetUrlHook(delegate(Gtk.AboutDialog dialog, string link) {
+				Gnome.Url.Show(link);
+			});
+			aboutDialog.Website = AppInfo.sWebsite;
+			aboutDialog.Copyright = AppInfo.sCopyright;
+			aboutDialog.Response += OnAboutDialogClose;
+			
+			aboutDialog.Run();
 		}
 		
-		static void OnHelloAboutClose(object sender, ResponseArgs e) {
+		static void OnAboutDialogClose(object sender, ResponseArgs e) {
 			if (e.ResponseId==ResponseType.Cancel || e.ResponseId==ResponseType.DeleteEvent) {
 				aboutDialog.Destroy();
 				Console.WriteLine("main: about form closed");
