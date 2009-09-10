@@ -73,7 +73,6 @@ namespace PixClip {
 				fltJpg.AddMimeType("image/jpeg");
 				fltJpg.Name = "JPEG image format";
 				fcd.AddFilter(fltJpg);
-			 	
 				fcd.SetFilename("clip.jpg");
 				fcd.SetCurrentFolder(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop));
 				

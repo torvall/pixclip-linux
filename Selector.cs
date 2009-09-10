@@ -75,7 +75,7 @@ namespace PixClip {
 			OnScreenChanged(this, null);
 			this.ShowAll();
 			
-			this.GdkWindow.Cursor = new Gdk.Cursor(Gdk.CursorType.Tcross);
+			this.GdkWindow.Cursor = new Gdk.Cursor(this.Display, new Pixbuf("PixClip.cur"), 14, 14);
 			
 			Gdk.Keyboard.Grab(this.GdkWindow, true, Gtk.Global.CurrentEventTime);
 			Gtk.Grab.Add(this);
@@ -101,7 +101,7 @@ namespace PixClip {
 		static void DrawRectangle (Cairo.Context gr, Gdk.Rectangle rectData) {
 	        gr.Save ();
 
-			gr.Rectangle(new Cairo.Rectangle(rectData.X - 0.5, rectData.Y - 0.5, rectData.Width, rectData.Height)); 
+			gr.Rectangle(new Cairo.Rectangle(rectData.X - 0.5, rectData.Y - 0.5, rectData.Width + 2, rectData.Height + 2)); 
 	        
 	        gr.ClosePath ();
 	        gr.Restore ();
