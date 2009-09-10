@@ -8,6 +8,9 @@
     <ProjectGuid>{02DA4BE3-653F-46B3-9580-5C1D5E827167}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AssemblyName>PixClip</AssemblyName>
+    <StartupObject>PixClip.MainClass</StartupObject>
+    <ApplicationIcon>PixClip.ico</ApplicationIcon>
+    <CodePage>65001</CodePage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -16,7 +19,8 @@
     <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>3</WarningLevel>
+    <additionalargs>-debug</additionalargs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -37,9 +41,6 @@
     <Compile Include="Selector.cs" />
     <Compile Include="Capture.cs" />
     <Compile Include="AppInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Debug\PixClip.ico" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="PixClip.ico">

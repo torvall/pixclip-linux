@@ -81,14 +81,9 @@ namespace PixClip {
 
 		Gdk.Rectangle GetScreenLayout() {
 			Gdk.Rectangle rectLayout = new Gdk.Rectangle(0, 0, 0, 0);
-			if(this.Screen.NMonitors == 1) {
-				Console.WriteLine("selector: single monitor screen detected");
-				this.Fullscreen();
-			} else {
-				Console.WriteLine("selector: detected screen with " + this.Screen.NMonitors + " monitors");
-				for(int i = 0; i < this.Screen.NMonitors; i++) {
-					rectLayout = this.Screen.GetMonitorGeometry(i).Union(rectLayout);
-				}
+			Console.WriteLine("selector: detected screen with " + this.Screen.NMonitors + " monitors");
+			for(int i = 0; i < this.Screen.NMonitors; i++) {
+				rectLayout = this.Screen.GetMonitorGeometry(i).Union(rectLayout);
 			}
 			return rectLayout;
 		}
