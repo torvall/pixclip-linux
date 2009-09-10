@@ -34,8 +34,8 @@ namespace PixClip {
 		Gdk.Point ptSelectionStart;
 		Gdk.Point ptSelectionCurrent;
 		public Gdk.Rectangle rectSelection;
-
-		public Selector() : base (Gtk.WindowType.Toplevel) {
+		
+		public Selector() : base (Gtk.WindowType.Popup) {
 			Console.WriteLine("selector: starting");
 			this.Name = "PixClipSelector";
 			this.Title = "PixClip";
@@ -44,7 +44,7 @@ namespace PixClip {
 			this.SkipPagerHint = true;
 			this.SkipTaskbarHint = true;
 			
-			this.TypeHint = WindowTypeHint.Splashscreen;
+			this.TypeHint = WindowTypeHint.Normal;
 
 			this.DoubleBuffered = true;
 
@@ -76,6 +76,10 @@ namespace PixClip {
 			this.ShowAll();
 			
 			this.GdkWindow.Cursor = new Gdk.Cursor(Gdk.CursorType.Tcross);
+			
+			Gdk.Keyboard.Grab(this.GdkWindow, true, Gtk.Global.CurrentEventTime);
+			Gtk.Grab.Add(this);
+			
 			Console.WriteLine("selector: started");
 		}
 
@@ -103,6 +107,12 @@ namespace PixClip {
 	        gr.Restore ();
 	    }
 	    
+		void CloseSelector() {
+			Gtk.Grab.Remove(this);
+			Gdk.Keyboard.Ungrab(Gtk.Global.CurrentEventTime);
+			this.Destroy();
+		}
+		
 		void OnExposeEvent(object o, ExposeEventArgs args) {
 			Widget win = (Widget) o;
 			using(Cairo.Context ctx = CairoHelper.Create(win.GdkWindow)) {
@@ -143,7 +153,7 @@ namespace PixClip {
 		void OnKeyPressEvent(object o, KeyPressEventArgs args) {
 			if(args.Event.Key == Gdk.Key.Escape) {
 				Console.WriteLine("selector: quit selection");
-				this.Destroy();
+				CloseSelector();
 			}
 		}
 
@@ -158,10 +168,10 @@ namespace PixClip {
 		
 		protected virtual void OnButtonReleaseEvent (object o, Gtk.ButtonReleaseEventArgs args) {
 			if(bSelecting) {
-				if(args.Event.Button == 1) {
+				if(args.Event.Button == 1 && bSelecting) {
 					bSelecting = false;
 					Console.WriteLine("selector: selected rect - w=" + rectSelection.Width + " x h=" + rectSelection.Height);
-					this.Destroy();
+					CloseSelector();
 				} else if (args.Event.Button == 3) {
 					bSelecting = false;
 					rectSelection = new Rectangle(0, 0, 0, 0);
