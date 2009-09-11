@@ -18,7 +18,8 @@ This version of PixClip is aimed to be Gnome Desktop compliant, although
 integration with the K Desktop Environment is also intended.
 
 Features:
-  * Select region from screen;
+  * Select clips from screen;
+  * Capture entire screen;
   * Puts image on clipboard (allows to paste on OpenOffice, GIMP, etc.);
   * Save clip as jpeg.
 

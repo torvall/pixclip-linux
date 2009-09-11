@@ -89,15 +89,18 @@ namespace PixClip {
 		}
 
 		static void OnMainSelectDestroyed(object sender, EventArgs e) {
-			rectSelection = ((Selector) sender).rectSelection;
-			if(rectSelection.Width > 0 && rectSelection.Height > 0) {
-				Console.WriteLine("main: selected rect - w=" + rectSelection.Width + " x h=" + rectSelection.Height);
-				Thread.Sleep(1000);
-				pixClip = Capture.CaptureImage(rectSelection);
-				GetClip();
+			if(bSelecting) {
+				bSelecting = false;
+				Selector mainSelect = (Selector) sender;
+				rectSelection = mainSelect.rectSelection;
+				mainSelect.Dispose();
+				if(rectSelection.Width > 0 && rectSelection.Height > 0) {
+					Console.WriteLine("main: selected rect - w=" + rectSelection.Width + " x h=" + rectSelection.Height);
+					pixClip = Capture.CaptureImage(rectSelection);
+					GetClip();
+				}
+				Console.WriteLine("main: capture process ended");
 			}
-			bSelecting = false;
-			Console.WriteLine("main: capture process ended");
 		}
 
 		static void OnTrayIconPopup(object o, EventArgs args) {
@@ -109,7 +112,6 @@ namespace PixClip {
 				Gtk.Image imgSaveImage = new Gtk.Image(Stock.SaveAs, IconSize.Menu);
 				menuItemSaveImage.Image = imgSaveImage;
 				menuItemSaveImage.TooltipText = "Save last clipped image to file";
-				// TODO: Check for image availability when drawing menu...
 				if(pixClip == null) {
 					menuItemSaveImage.State = StateType.Insensitive;
 				}
@@ -156,10 +158,12 @@ namespace PixClip {
 		}
 
 		static void OnSaveImageActivated(object sender, EventArgs e) {
+			Console.WriteLine("main: save image command from menu");
 			GetClip();
 		}
 			
 		static void OnCaptureScreenActivated(object sender, EventArgs e) {
+			Console.WriteLine("main: capturing screen");
 			Thread.Sleep(1000);
 			pixClip = Capture.CaptureScreen();
 			GetClip();

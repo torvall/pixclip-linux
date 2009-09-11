@@ -58,7 +58,6 @@ namespace PixClip {
 			this.AddEvents((int) Gdk.EventMask.ButtonReleaseMask);
 			this.AddEvents((int) Gdk.EventMask.PointerMotionMask);
 
-			/*this.DeleteEvent += OnDeleteEvent;*/
 			this.ExposeEvent += OnExposeEvent;
 			this.KeyPressEvent += OnKeyPressEvent;
 			this.ScreenChanged += OnScreenChanged;
@@ -92,12 +91,6 @@ namespace PixClip {
 			return rectLayout;
 		}
 		
-		/*static void OnDeleteEvent(object obj, DeleteEventArgs args) {
-			Console.WriteLine("selector: selector window deleted");
-			Application.Quit ();
-			args.RetVal = true;
-		}*/
-		
 		static void DrawRectangle(Cairo.Context gr, Gdk.Rectangle rectData) {
 	        gr.Save ();
 
@@ -111,7 +104,6 @@ namespace PixClip {
 			Gtk.Grab.Remove(this);
 			Gdk.Keyboard.Ungrab(Gtk.Global.CurrentEventTime);
 			this.Destroy();
-			this.QueueDraw();
 		}
 		
 		void OnExposeEvent(object o, ExposeEventArgs args) {
