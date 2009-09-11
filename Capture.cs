@@ -30,8 +30,8 @@ namespace PixClip {
 		public static Gdk.Pixbuf CaptureImage(Gdk.Rectangle rectSelection) {
 			Window winRoot = Gdk.Screen.Default.RootWindow;
 		 	// TODO: Fix selection box and crosshair alignment.
-			Gdk.Pixbuf pix = new Gdk.Pixbuf(Colorspace.Rgb, true, 8, rectSelection.Width + 1, rectSelection.Height + 1);
-			pix.GetFromDrawable(winRoot, winRoot.Colormap, rectSelection.X, rectSelection.Y, 0, 0, rectSelection.Width + 1, rectSelection.Height + 1);
+			Gdk.Pixbuf pix = new Gdk.Pixbuf(Colorspace.Rgb, true, 8, rectSelection.Width, rectSelection.Height);
+			pix.GetFromDrawable(winRoot, winRoot.Colormap, rectSelection.X, rectSelection.Y, 0, 0, rectSelection.Width, rectSelection.Height);
 			Console.WriteLine("capture: image captured");
 			return pix;
 		}

@@ -57,11 +57,11 @@ namespace PixClip {
 				Selector mainSelect = new Selector();
 				mainSelect.AppPaintable = true;
 				
-				mainSelect.Hidden += OnMainSelectHidden;
+				mainSelect.Destroyed += OnMainSelectDestroyed;
 			}
 		}
 
-		static void OnMainSelectHidden(object sender, EventArgs e) {
+		static void OnMainSelectDestroyed(object sender, EventArgs e) {
 			rectSelection = ((Selector) sender).rectSelection;
 			if(rectSelection.Width > 0 && rectSelection.Height > 0) {
 				Console.WriteLine("main: selected rect - w=" + rectSelection.Width + " x h=" + rectSelection.Height);
@@ -72,9 +72,9 @@ namespace PixClip {
 				FileFilter fltJpg = new FileFilter();
 				fltJpg.AddMimeType("image/jpeg");
 				fltJpg.Name = "JPEG image format";
-				fcd.AddFilter(fltJpg);
 				fcd.SetFilename("clip.jpg");
 				fcd.SetCurrentFolder(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop));
+				fcd.AddFilter(fltJpg);
 				
 				Console.WriteLine("main: selecting save target");
 				if (fcd.Run() == (int) ResponseType.Accept) {

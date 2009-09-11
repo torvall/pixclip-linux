@@ -75,7 +75,7 @@ namespace PixClip {
 			OnScreenChanged(this, null);
 			this.ShowAll();
 			
-			this.GdkWindow.Cursor = new Gdk.Cursor(this.Display, new Pixbuf("PixClip.cur"), 14, 14);
+			this.GdkWindow.Cursor = new Gdk.Cursor(this.Display, new Pixbuf("PixClip.cur"), 15, 15);
 			
 			Gdk.Keyboard.Grab(this.GdkWindow, true, Gtk.Global.CurrentEventTime);
 			Gtk.Grab.Add(this);
@@ -98,10 +98,10 @@ namespace PixClip {
 			args.RetVal = true;
 		}*/
 		
-		static void DrawRectangle (Cairo.Context gr, Gdk.Rectangle rectData) {
+		static void DrawRectangle(Cairo.Context gr, Gdk.Rectangle rectData) {
 	        gr.Save ();
 
-			gr.Rectangle(new Cairo.Rectangle(rectData.X - 0.5, rectData.Y - 0.5, rectData.Width + 2, rectData.Height + 2)); 
+			gr.Rectangle(new Cairo.Rectangle(rectData.X + 0.5, rectData.Y + 0.5, rectData.Width, rectData.Height)); 
 	        
 	        gr.ClosePath ();
 	        gr.Restore ();
@@ -111,6 +111,7 @@ namespace PixClip {
 			Gtk.Grab.Remove(this);
 			Gdk.Keyboard.Ungrab(Gtk.Global.CurrentEventTime);
 			this.Destroy();
+			this.QueueDraw();
 		}
 		
 		void OnExposeEvent(object o, ExposeEventArgs args) {
@@ -168,12 +169,12 @@ namespace PixClip {
 		
 		protected virtual void OnButtonReleaseEvent (object o, Gtk.ButtonReleaseEventArgs args) {
 			if(bSelecting) {
-				if(args.Event.Button == 1 && bSelecting) {
-					bSelecting = false;
+				bSelecting = false;
+				if(args.Event.Button == 1) {
+					rectSelection = new Rectangle(rectSelection.X + 1, rectSelection.Y + 1, rectSelection.Width - 1, rectSelection.Height - 1);
 					Console.WriteLine("selector: selected rect - w=" + rectSelection.Width + " x h=" + rectSelection.Height);
 					CloseSelector();
 				} else if (args.Event.Button == 3) {
-					bSelecting = false;
 					rectSelection = new Rectangle(0, 0, 0, 0);
 					this.QueueDraw();
 					Console.WriteLine("selector: selection cancelled");
