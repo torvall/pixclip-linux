@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Threading;
 using Gtk;
 using Gdk;
 
@@ -33,6 +34,8 @@ namespace PixClip {
 		
 		public static Gdk.Rectangle rectSelection;
 		private static bool bSelecting = false;
+		
+		private static Pixbuf pixClip;
 		
 		public static void Main (string[] args) {
 			Console.WriteLine("main: PixClip starting");
@@ -50,6 +53,30 @@ namespace PixClip {
 			Console.WriteLine("main: ended");
 		}
 
+		static void GetClip() {
+			// TODO: Do not offer to save clip after selection and popup a clickable tooltip instead.
+			FileChooserDialog fcd = new FileChooserDialog("PixClip - Save clip as...", null, FileChooserAction.Save, "Cancel", ResponseType.Cancel, "Save", ResponseType.Accept);
+			FileFilter fltJpg = new FileFilter();
+			fltJpg.AddMimeType("image/jpeg");
+			fltJpg.Name = "JPEG image format";
+			fcd.SetFilename("clip.jpg");
+			fcd.SetCurrentFolder(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop));
+			fcd.AddFilter(fltJpg);
+			
+			Console.WriteLine("main: selecting save target");
+			if (fcd.Run() == (int) ResponseType.Accept) {
+				pixClip.Save(fcd.Filename, "jpeg");
+				Console.WriteLine("main: image saved");
+			} else {
+				Console.WriteLine("main: image save canceled");
+			}
+			fcd.Destroy();
+
+			Clipboard clip = Gtk.Clipboard.Get(Atom.Intern("CLIPBOARD", false));
+			clip.Image = pixClip;
+			Console.WriteLine("main: image added to the clipboard");
+		}
+		
 		static void OnTrayIconActivate(object sender, EventArgs e) {
 			if(!bSelecting) {
 				Console.WriteLine("main: capture process started");
@@ -65,29 +92,9 @@ namespace PixClip {
 			rectSelection = ((Selector) sender).rectSelection;
 			if(rectSelection.Width > 0 && rectSelection.Height > 0) {
 				Console.WriteLine("main: selected rect - w=" + rectSelection.Width + " x h=" + rectSelection.Height);
-				Pixbuf pixClip = Capture.CaptureImage(rectSelection);
-
-				// TODO: Do not offer to save clip after selection and popup a clickable tooltip instead.
-				FileChooserDialog fcd = new FileChooserDialog("PixClip - Save clip as...", null, FileChooserAction.Save, "Cancel", ResponseType.Cancel, "Save", ResponseType.Accept);
-				FileFilter fltJpg = new FileFilter();
-				fltJpg.AddMimeType("image/jpeg");
-				fltJpg.Name = "JPEG image format";
-				fcd.SetFilename("clip.jpg");
-				fcd.SetCurrentFolder(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop));
-				fcd.AddFilter(fltJpg);
-				
-				Console.WriteLine("main: selecting save target");
-				if (fcd.Run() == (int) ResponseType.Accept) {
-					pixClip.Save(fcd.Filename, "jpeg");
-					Console.WriteLine("main: image saved");
-				} else {
-					Console.WriteLine("main: image save canceled");
-				}
-				fcd.Destroy();
-
-				Clipboard clip = Gtk.Clipboard.Get(Atom.Intern("CLIPBOARD", false));
-				clip.Image = pixClip;
-				Console.WriteLine("main: image added to the clipboard");
+				Thread.Sleep(1000);
+				pixClip = Capture.CaptureImage(rectSelection);
+				GetClip();
 			}
 			bSelecting = false;
 			Console.WriteLine("main: capture process ended");
@@ -98,10 +105,14 @@ namespace PixClip {
 				Console.WriteLine("main: icon menu called");
 				Menu popupMenu = new Menu();
 	
-				ImageMenuItem menuItemSaveImage = new ImageMenuItem ("Save image...");
-				Gtk.Image appimg1 = new Gtk.Image(Stock.SaveAs, IconSize.Menu);
-				menuItemSaveImage.Image = appimg1;
-				menuItemSaveImage.State = StateType.Insensitive; // TODO: Check for image availability when drawing menu...
+				ImageMenuItem menuItemSaveImage = new ImageMenuItem("Save image...");
+				Gtk.Image imgSaveImage = new Gtk.Image(Stock.SaveAs, IconSize.Menu);
+				menuItemSaveImage.Image = imgSaveImage;
+				menuItemSaveImage.TooltipText = "Save last clipped image to file";
+				// TODO: Check for image availability when drawing menu...
+				if(pixClip == null) {
+					menuItemSaveImage.State = StateType.Insensitive;
+				}
 				popupMenu.Add(menuItemSaveImage);
 
 				menuItemSaveImage.Activated += OnSaveImageActivated;
@@ -109,16 +120,29 @@ namespace PixClip {
 				SeparatorMenuItem sepMnit1 = new SeparatorMenuItem();
 				popupMenu.Add(sepMnit1);
 				
-				ImageMenuItem menuItemAbout = new ImageMenuItem ("About...");
-				Gtk.Image appimg2 = new Gtk.Image(Stock.About, IconSize.Menu);
-				menuItemAbout.Image = appimg2;
+				ImageMenuItem menuItemCaptureScreen = new ImageMenuItem("Capture screen");
+				Gtk.Image imgCaptureScreen = new Gtk.Image(Stock.Fullscreen, IconSize.Menu);
+				menuItemCaptureScreen.Image = imgCaptureScreen;
+				menuItemCaptureScreen.TooltipText = "Capture entire screen, including all monitors you may have";
+				popupMenu.Add(menuItemCaptureScreen);
+
+				menuItemCaptureScreen.Activated += OnCaptureScreenActivated;
+
+				SeparatorMenuItem sepMnit2 = new SeparatorMenuItem();
+				popupMenu.Add(sepMnit2);
+				
+				ImageMenuItem menuItemAbout = new ImageMenuItem("About...");
+				Gtk.Image imgAbout = new Gtk.Image(Stock.About, IconSize.Menu);
+				menuItemAbout.Image = imgAbout;
+				menuItemAbout.TooltipText = "Information about this application";
 				popupMenu.Add(menuItemAbout);
 
 				menuItemAbout.Activated += OnAboutDialogActivated;
 				
-				ImageMenuItem menuItemQuit = new ImageMenuItem ("Quit");
-				Gtk.Image appimg3 = new Gtk.Image(Stock.Quit, IconSize.Menu);
-				menuItemQuit.Image = appimg3;
+				ImageMenuItem menuItemQuit = new ImageMenuItem("Quit");
+				Gtk.Image imgQuit = new Gtk.Image(Stock.Quit, IconSize.Menu);
+				menuItemQuit.Image = imgQuit;
+				menuItemQuit.TooltipText = "Exit PixClip";
 				popupMenu.Add(menuItemQuit);
 				
 				menuItemQuit.Activated += delegate {
@@ -132,7 +156,13 @@ namespace PixClip {
 		}
 
 		static void OnSaveImageActivated(object sender, EventArgs e) {
+			GetClip();
+		}
 			
+		static void OnCaptureScreenActivated(object sender, EventArgs e) {
+			Thread.Sleep(1000);
+			pixClip = Capture.CaptureScreen();
+			GetClip();
 		}
 			
 		static void OnAboutDialogActivated(object sender, EventArgs e) {
@@ -157,7 +187,7 @@ namespace PixClip {
 		}
 		
 		static void OnAboutDialogClose(object sender, ResponseArgs e) {
-			if (e.ResponseId==ResponseType.Cancel || e.ResponseId==ResponseType.DeleteEvent) {
+			if (e.ResponseId == ResponseType.Cancel || e.ResponseId == ResponseType.DeleteEvent) {
 				aboutDialog.Destroy();
 				Console.WriteLine("main: about form closed");
 			}

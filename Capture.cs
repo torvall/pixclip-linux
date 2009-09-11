@@ -35,5 +35,16 @@ namespace PixClip {
 			Console.WriteLine("capture: image captured");
 			return pix;
 		}
+		
+		public static Gdk.Pixbuf CaptureScreen() {
+			int width = 0;
+			int height = 0;
+			Window winRoot = Gdk.Screen.Default.RootWindow;
+			winRoot.GetSize(out width, out height);
+			Gdk.Pixbuf pix = new Gdk.Pixbuf(Colorspace.Rgb, true, 8, width, height);
+			pix.GetFromDrawable(winRoot, winRoot.Colormap, 0, 0, 0, 0, width, height);
+			Console.WriteLine("capture: screen captured");
+			return pix;
+		}
 	}
 }
