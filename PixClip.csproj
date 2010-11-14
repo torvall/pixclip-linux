@@ -54,5 +54,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README" />
+    <None Include="pixclip.snk" />
   </ItemGroup>
 </Project>

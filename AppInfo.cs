@@ -21,6 +21,12 @@
 */
 
 using System;
+using System.Reflection;	
+using System.Runtime.CompilerServices;
+
+[assembly: AssemblyTitle("PixClip Linux")]
+[assembly: AssemblyVersion("0.0.2.0")]
+[assembly: AssemblyKeyFile("pixclip.snk")]
 
 namespace PixClip {
 

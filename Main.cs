@@ -65,7 +65,11 @@ namespace PixClip {
 			
 			Console.WriteLine("main: selecting save target");
 			if (fcd.Run() == (int) ResponseType.Accept) {
-				pixClip.Save(fcd.Filename, "jpeg");
+				// TODO: Add quality setting to options form.
+				// http://library.gnome.org/devel/gdk-pixbuf/stable/gdk-pixbuf-file-saving.html
+				string [] keys = {"quality"};
+				string [] values = {"90"};
+				pixClip.Savev(fcd.Filename, "jpeg", keys, values);
 				Console.WriteLine("main: image saved");
 			} else {
 				Console.WriteLine("main: image save canceled");
